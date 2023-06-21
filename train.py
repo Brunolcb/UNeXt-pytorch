@@ -57,7 +57,8 @@ def parse_args():
                         help='loss: ' +
                         ' | '.join(LOSS_NAMES) +
                         ' (default: BCEDiceLoss)')
-    
+    #inputs
+    parser.add_argument('--inputs', default='inputs', type=str)
     # dataset
     parser.add_argument('--dataset', default='isic',
                         help='dataset name')
@@ -96,6 +97,7 @@ def parse_args():
 
     parser.add_argument('--num_workers', default=4, type=int)
 
+    
     config = parser.parse_args()
 
     return config
@@ -248,7 +250,7 @@ def main():
         raise NotImplementedError
 
     # Data loading code
-    img_ids = glob(os.path.join('/content/drive/Othercomputers/Mylaptop/inputs', config['dataset'], 'images', '*' + config['img_ext']))
+    img_ids = glob(os.path.join(config['inputs'], config['dataset'], 'images', '*' + config['img_ext']))
     img_ids = [os.path.splitext(os.path.basename(p))[0] for p in img_ids]
 
     train_img_ids, val_img_ids = train_test_split(img_ids, test_size=0.2, random_state=41)
@@ -267,16 +269,16 @@ def main():
 
     train_dataset = Dataset(
         img_ids=train_img_ids,
-        img_dir=os.path.join('/content/drive/Othercomputers/Mylaptop/inputs', config['dataset'], 'images'),
-        mask_dir=os.path.join('/content/drive/Othercomputers/Mylaptop/inputs', config['dataset'], 'masks'),
+        img_dir=os.path.join(config['inputs'], config['dataset'], 'images'),
+        mask_dir=os.path.join(config['inputs'], config['dataset'], 'masks'),
         img_ext=config['img_ext'],
         mask_ext=config['mask_ext'],
         num_classes=config['num_classes'],
         transform=train_transform)
     val_dataset = Dataset(
         img_ids=val_img_ids,
-        img_dir=os.path.join('/content/drive/Othercomputers/Mylaptop/inputs', config['dataset'], 'images'),
-        mask_dir=os.path.join('/content/drive/Othercomputers/Mylaptop/inputs', config['dataset'], 'masks'),
+        img_dir=os.path.join(config['inputs'], config['dataset'], 'images'),
+        mask_dir=os.path.join(config['inputs'], config['dataset'], 'masks'),
         img_ext=config['img_ext'],
         mask_ext=config['mask_ext'],
         num_classes=config['num_classes'],
